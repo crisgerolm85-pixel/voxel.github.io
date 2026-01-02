@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Voxel World</title>
+<title>Voxel World Builder + ZIP Save/Load</title>
 
 <style>
 body{margin:0;overflow:hidden;font-family:sans-serif;touch-action:none;background:#333}
@@ -16,7 +16,18 @@ body{margin:0;overflow:hidden;font-family:sans-serif;touch-action:none;backgroun
 .btn.active{background:#ff4757;color:#fff}
 .btn-rect{flex:1;padding:8px;border-radius:8px;border:1px solid #ccc;font-size:12px}
 #mode-text{font-size:11px;font-weight:bold}
-#texture-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:15px;z-index:1000;box-shadow:0 0 50px rgba(0,0,0,.5)}
+#texture-modal{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#fff;
+padding:20px;
+border-radius:15px;
+z-index:1000;
+box-shadow:0 0 50px rgba(0,0,0,.5)
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -38,19 +49,19 @@ body{margin:0;overflow:hidden;font-family:sans-serif;touch-action:none;backgroun
 <div class="row">
 <input type="color" id="colorPicker" value="#00ff88">
 <input type="file" id="upload" accept="image/*">
-<div id="mode-text">Color sólido</div>
+<div id="mode-text">Solid Color</div>
 </div>
 <div class="row">
-<button class="btn-rect" id="exportBtn">💾 Exportar ZIP</button>
-<button class="btn-rect" id="importBtn">📂 Importar</button>
+<button class="btn-rect" id="exportBtn">💾 Export ZIP</button>
+<button class="btn-rect" id="importBtn">📂 Import</button>
 <input type="file" id="importFile" style="display:none" accept=".zip,.json">
 </div>
 </div>
 </div>
 
 <div id="texture-modal">
-<h4>Textura faltante</h4>
-<p>Subí la imagen para los bloques fucsia</p>
+<h4>Missing Texture</h4>
+<p>Please upload the image for the pink blocks</p>
 <input type="file" id="relinkTexture" accept="image/*">
 </div>
 
@@ -117,7 +128,7 @@ textureActive=false;
 activeColor=e.target.value;
 ghostMat.map=null;
 ghostMat.color.set(activeColor);
-modeText.innerText="Color sólido";
+modeText.innerText="Solid Color";
 };
 
 upload.onchange=e=>{
@@ -133,7 +144,7 @@ textureActive=true;
 ghostMat.color.set(0xffffff);
 ghostMat.map=tex;
 ghostMat.needsUpdate=true;
-modeText.innerText="Textura";
+modeText.innerText="Texture";
 });
 };
 
@@ -146,7 +157,7 @@ isDeleteMode=!isDeleteMode;
 deleteMode.classList.toggle("active",isDeleteMode);
 };
 
-reset.onclick=()=>{if(confirm("¿Borrar todo?"))clearWorld();};
+reset.onclick=()=>{if(confirm("Clear the entire world?"))clearWorld();};
 
 renderer.domElement.addEventListener("pointerdown",placeBlock);
 renderer.domElement.addEventListener("pointermove",updateGhost);
@@ -175,7 +186,7 @@ const blob=await new Promise(r=>canvas.toBlob(r));
 folder.file(id+".png",blob);
 }
 
-download(await zip.generateAsync({type:"blob"}),"mundo.zip");
+download(await zip.generateAsync({type:"blob"}),"world.zip");
 }
 
 function download(blob,name){
@@ -219,7 +230,7 @@ loadWorld(data);
 return;
 }
 
-/* Compatibilidad JSON antigua */
+/* Legacy JSON support */
 const r=new FileReader();
 r.onload=e=>loadWorld(JSON.parse(e.target.result));
 r.readAsText(file);
