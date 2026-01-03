@@ -31,6 +31,13 @@ box-shadow:0 0 50px rgba(0,0,0,.5)
 }
 </style>
 
+<script>
+const allowed = new URLSearchParams(location.search).get("from") === "ad";
+if (!allowed) {
+  // location.href = "/";
+}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
 <script type="importmap">
